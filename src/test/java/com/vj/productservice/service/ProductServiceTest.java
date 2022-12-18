@@ -1,5 +1,7 @@
 package com.vj.productservice.service;
 
+import com.vj.productservice.dto.ProductRequestDto;
+import com.vj.productservice.dto.ProductResponseDto;
 import com.vj.productservice.model.Product;
 import com.vj.productservice.repository.ProductRepository;
 import org.junit.jupiter.api.Test;
@@ -14,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class ProductServiceTest {
@@ -27,7 +29,16 @@ class ProductServiceTest {
 
     @Test
     void createProduct() {
+        ProductRequestDto productRequestDto = ProductRequestDto.builder().name("").description("").price(new BigDecimal(312.25)).build();
+        productService.createProduct(productRequestDto);
 
+        Product product = Product.builder()
+                .name(productRequestDto.getName())
+                .description(productRequestDto.getDescription())
+                .price(productRequestDto.getPrice())
+                .build();
+
+        verify(productRepository, times(1)).save(product);
     }
 
     @Test
@@ -37,6 +48,6 @@ class ProductServiceTest {
         productList.add(Product.builder().name("Samsung Watch").description("Samsung Watch 12 Yellow").price(new BigDecimal(41.25)).id(2L).build());
 
         when(productRepository.findAll()).thenReturn(productList); // mock
-        assertEquals(3, productService.getAllProducts().size());
+        assertEquals(2, productService.getAllProducts().size());
     }
 }
